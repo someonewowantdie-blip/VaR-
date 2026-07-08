@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Build (gcc, strict flags) + pipeline de prueba
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compilar con flags estrictos (-Wall -Wextra -pedantic)
+        run: |
+          gcc -std=c99 -O2 -Wall -Wextra -pedantic -Werror \
+              -c main.c stats.c var_engine.c backtest.c csv_loader.c
+          gcc -std=c99 -O2 -Wall -Wextra -pedantic -Werror \
+              -o var_engine main.o stats.o var_engine.o backtest.o csv_loader.o -lm
+
+      - name: Generar datos sintéticos y correr pipeline completo
+        run: |
+          gcc -std=c99 -O2 -Wall -Wextra -pedantic -Werror \
+              -o gen_sample_data gen_sample_data.c -lm
+          ./gen_sample_data > sample_returns.csv
+          ./var_engine sample_returns.csv 0.99 1000000 250
+
+  sanitizers:
+    name: AddressSanitizer + UndefinedBehaviorSanitizer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compilar con ASan + UBSan
+        run: |
+          gcc -std=c99 -O0 -g -fsanitize=address,undefined \
+              -o var_engine_san main.c stats.c var_engine.c backtest.c csv_loader.c -lm
+          gcc -std=c99 -O0 -g -o gen_sample_data gen_sample_data.c -lm
+
+      - name: Ejecutar bajo sanitizers (falla el job si hay UB o fugas de memoria)
+        run: |
+          ./gen_sample_data > sample_returns.csv
+          ./var_engine_san sample_returns.csv 0.99 1000000 250
