@@ -1,4 +1,4 @@
-![CI](https://github.com/amateogr/var-engine/actions/workflows/ci.yml/badge.svg)
+[![CI](https://github.com/amateogr/var-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/amateogr/var-engine/actions/workflows/ci.yml)
 # VaR Engine — Motor de Value at Risk y Backtesting en C99
 
 Motor de gestión de riesgos financieros implementado en C99 puro, sin
@@ -118,4 +118,4 @@ gen_sample_data.c   Generador de datos sintéticos para pruebas
 
 ## Licencia
 
-Distribuido bajo licencia MIT. Ver [License](License).
+Distribuido bajo licencia MIT. Ver [LICENSE](LICENSE).
