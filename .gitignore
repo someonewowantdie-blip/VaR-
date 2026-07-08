@@ -1,0 +1,7 @@
+# Ejecutables compilados
+var_engine
+gen_sample_data
+
+# Archivos objeto binarios y datos de prueba
+*.o
+*.csv
